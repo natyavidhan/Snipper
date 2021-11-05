@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home | Snipper</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap" rel="stylesheet">
+</head>
+<body style='font-family: "Ubuntu";'>
+    <div class="container mt-5">
+        <div class="text-center">
+            <h1>Snipper</h1>
+            <img src="{{user['avatar']}}" alt="" height="200px">
+            <h1>Welcome {{user['username']}}</h1>
+            <input type="text" id="name"><button class="btn-sm btn-warning mx-1" onclick="changeName()">Change Name</button>
+            <br>
+            <a href="/logout"><button class="btn btn-danger">Logout</button></a>
+            <a href="/new"><button class="btn btn-info">New Snippet</button></a>
+        </div>
+    </div>
+    <script>
+        function changeName() {
+            var name = document.getElementById("name").value;
+            $.ajax({
+                url: "/changeName",
+                type: "POST",
+                data: {
+                    name: name
+                },
+                success: function(data) {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+        changeTheme();
+        changeLanguage();
+    </script>
+</body>
+</html>

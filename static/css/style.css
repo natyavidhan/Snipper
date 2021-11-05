@@ -1,0 +1,7 @@
+body {
+    background: rgb(53,101,82);
+    background: linear-gradient(90deg, rgba(53,101,82,1) 35%, rgba(54,61,92,1) 100%);
+}
+h1, h2, h3, h5, h6, p, label{
+    color: #fff;
+}
