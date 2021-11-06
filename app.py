@@ -46,6 +46,8 @@ def index():
 @app.route('/home')
 def home():
     if 'user' in session:
+        snips = database.getUserSnips(session['user']['email'])
+        session['user']['snips'] = snips
         return render_template('home.html', user = session['user'])
     return redirect(url_for('index'))
 
@@ -80,10 +82,25 @@ def uploadSnip():
         code = request.form.get('code')
         language = request.form.get('language')
         theme = request.form.get('theme')
-        database.uploadSnip(session['user']['email'], code, name, description, language, theme)
-        details = request.form.to_dict()
-        print(details)
-        return "Uploaded!"
+        response = database.uploadSnip(session['user']['email'], code, name, description, language, theme)
+        return redirect(f'/snip/{response}')
+
+@app.route('/snip/<id>', methods=['GET'])
+def snip(id):
+    print(database.getSnip(id))
+    return render_template('snip.html', snip = database.getSnip(id), themes = themes, langs = languages)
+
+@app.route('/user/<id>')
+def user(id):
+    if id == session['user']['_id']:
+        return redirect(url_for('home'))
+    user = database.getUserWithId(id)
+    if user:
+        snips = database.getUserSnips(user['email'])
+        user['snips'] = snips
+        return render_template('user.html', user = user)
+    else:
+        return abort(404)
 
 
 def handle_authorize(remote, token, user_info):

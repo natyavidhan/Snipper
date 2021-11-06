@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>New Snip | Snipper</title>
+    <title>{{snip['name']}} by {{snip['by']['username']}} | Snipper</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -38,68 +38,34 @@
 </head>
 <body style='font-family: "Ubuntu";'>
     <div class="container mb-5 mt-5">
-        <h1 class="text-center mb-5">New Snippet</h1>
-        <form action="/uploadSnip" method="post">
-            <label for="name">Name</label>
-            <br>
-            <input type="text" name="name" id="name" class="form">
-            <br>
+        <div class="text-center">
+            <h1>{{snip['name']}}</h1>
+            <h4>{{snip['description']}}</h4>
+            <a href="/user/{{snip['by']['_id']}}"><h6>By: {{snip['by']['username']}}</h6></a>            
+        </div>
+        <pre>
+            <code id="editor">
 
-            <label for="description">Description</label>
-            <textarea name="description" id="description" class="form"></textarea>
-
-            <label for="theme">Choose Theme</label>
-            <select name="theme" id="theme" class="form" onchange="changeTheme()">
-                {% for theme in themes %}
-                    <option value="{{theme}}">{{theme}}</option>
-                {% endfor %}
-            </select>
-            <br>
-
-            <label for="theme">Choose Language</label>
-            <select name="language" id="language" onchange="changeLanguage()" class="form">
-                {% for lang in langs %}
-                    <option value="{{lang}}">{{lang}}</option>
-                {% endfor %}
-            </select>
-            <textarea name="code" id="editor" class="mb-5 mt-5" cols="30" rows="10" oninput="updatepreview()"></textarea>
-            <button type="submit" class="btn btn-success mt-4">Submit</button>
-        </form>
+            </code>
+        </pre>
     </div>
     <script>
+        var snip = `{{snip['snip']}}`;
+        function decodeHtml(html) {
+            var txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            return txt.value;
+        }
+        snip = decodeHtml(snip);
         let myTextarea = document.getElementById("editor");
-        var editor = CodeMirror.fromTextArea(myTextarea, {
+        var editor = CodeMirror(myTextarea, {
             lineNumbers: true,
-            mode: "javascript",
-            theme: "dracula",
+            mode: "{{snip['language']}}",
+            theme: "{{snip['theme']}}",
+            value: snip,
+            readOnly: true,
+            lineWrapping: false
         });
-        function changeTheme(){
-            theme = document.getElementById("theme").value;
-            editor.setOption("theme", theme);
-        }
-        function changeLanguage(){
-            theme = document.getElementById("language").value;
-            editor.setOption("mode", theme);
-        }
-        function changeName() {
-            var name = document.getElementById("name").value;
-            $.ajax({
-                url: "/changeName",
-                type: "POST",
-                data: {
-                    name: name
-                },
-                success: function(data) {
-                    if (data.success) {
-                        window.location.reload();
-                    } else {
-                        window.location.reload();
-                    }
-                }
-            });
-        }
-        changeTheme();
-        changeLanguage();
     </script>
 </body>
 </html>

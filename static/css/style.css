@@ -1,7 +1,39 @@
 body {
-    background: rgb(53,101,82);
-    background: linear-gradient(90deg, rgba(53,101,82,1) 35%, rgba(54,61,92,1) 100%);
+    /* background: rgb(53,101,82);
+    background: linear-gradient(90deg, rgba(53,101,82,1) 35%, rgba(54,61,92,1) 100%); */
+    background-color: darkcyan !important;
 }
 h1, h2, h3, h5, h6, p, label{
     color: #fff;
+}
+.form{
+    border: 1px solid rgb(0, 0, 0);
+    background-color: rgba(42, 42, 42, 0.748);
+    border-radius: 15px;
+    padding: 5px;
+    margin: 5px;
+    color: white;
+}
+
+.snip{
+    background-color: rgba(42, 42, 42, 0.748);
+    border: 3px solid rgb(0, 0, 0);
+    border-radius: 15px;
+    padding: 5px; 
+    margin: 10px;
+    text-decoration: none;
+    color: white;
+}
+
+.snip:hover{
+    background-color: rgba(30, 30, 30, 0.748);
+    border: 3px solid rgb(0, 0, 0);
+    border-radius: 15px;
+    color: white;
+}
+.snips{
+    display: grid;
+    /* grid-template-rows: 1fr; */
+    /* grid-gap: 1px; */
+    
 }
