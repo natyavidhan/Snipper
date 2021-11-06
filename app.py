@@ -40,7 +40,8 @@ backends = [GitHub, Google, Gitlab, Discord]
 @app.route('/')
 def index():
     if 'user' in session:
-        return redirect(url_for('home'))
+        snips = database.get10RandomSnips()
+        return render_template('browse.html', snips=snips)
     return render_template('index.html')
 
 @app.route('/home')
@@ -87,8 +88,9 @@ def uploadSnip():
 
 @app.route('/snip/<id>', methods=['GET'])
 def snip(id):
-    print(database.getSnip(id))
-    return render_template('snip.html', snip = database.getSnip(id), themes = themes, langs = languages)
+    if 'user' in session:
+        return render_template('snip.html', snip = database.getSnip(id), themes = themes, langs = languages, user = session['user'])
+    return render_template('snip.html', snip = database.getSnip(id), themes = themes, langs = languages, user = None)
 
 @app.route('/user/<id>')
 def user(id):
@@ -102,6 +104,40 @@ def user(id):
     else:
         return abort(404)
 
+@app.route('/save', methods=['POST'])
+def save():
+    if 'user' in session:
+        snipID = request.args.get('snip')
+        snip = database.getSnip(snipID)
+        if snip:
+            database.saveSnip(snipID, session['user']['email'])
+            session['user'] = database.getUser(session['user']['email'])
+            return "ok"
+        return abort(404)
+    return abort(404)
+
+@app.route('/remove', methods=['POST'])
+def remove():
+    if 'user' in session:
+        snipID = request.args.get('snip')
+        if snipID in session['user']['snips']:
+            database.removeSnip(snipID, session['user']['email'])
+            session['user'] = database.getUser(session['user']['email'])
+            return "ok"
+        return abort(404)
+    return abort(404)
+
+@app.route('/saves')
+def saves():
+    if 'user' in session:
+        # return jsonify(session['user']['saves'])
+        snips = []
+        for snip in session['user']['saves']:
+            snips.append(database.getSnip(snip))
+        session['user']['saves'] = snips
+        return render_template('saves.html', user = session['user'])
+    else:
+        return redirect(url_for('index'))
 
 def handle_authorize(remote, token, user_info):
     if database.userExists(user_info['email']):

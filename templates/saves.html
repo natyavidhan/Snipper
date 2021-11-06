@@ -17,37 +17,22 @@
     <div class="container mt-5">
         <div class="text-center">
             <h1>Snipper</h1>
-            <img src="{{user['avatar']}}" alt="" height="200px">
-            <h1>Welcome {{user['username']}}</h1>
-            <input type="text" id="name"><button class="btn-sm btn-warning mx-1" onclick="changeName()">Change Name</button>
-            <br>
-            <a href="/logout"><button class="btn btn-danger">Logout</button></a>
-            <a href="/new"><button class="btn btn-info">New Snippet</button></a>
-            <a href="/saves"><button class="btn btn-info">Saved Snips</button></a>
-            <h3 class="mt-5 mb-3">Your Snips</h3>
+            <h3 class="mt-5 mb-3">Saved Snips</h3>
             <div class="snips">
-                {% for snip in user['snips'] %}
-                    <a href="/snip/{{snip['_id']}}" class="snip"><h4>{{snip['name']}}</h4><p>{{snip['description']}}</p></a>
+                {% for snip in user['saves'] %}
+                <div class="snip">
+                    <a href="/snip/{{snip['_id']}}"><h4>{{snip['name']}}</h4><p>{{snip['description']}}</p><br></a><button class="btn btn-danger" onclick="removeSnip(`{{snip['_id']}}`);">Remove</button>
+                </div>
                 {% endfor %}
             </div>
         </div>
     </div>
     <script>
-        function changeName() {
-            var name = document.getElementById("name").value;
-            $.ajax({
-                url: "/changeName",
-                type: "POST",
-                data: {
-                    name: name
-                },
-                success: function(data) {
-                    if (data.success) {
-                        window.location.reload();
-                    } else {
-                        window.location.reload();
-                    }
-                }
+        function removeSnip(id){
+            fetch('/remove?snip='+id, {
+                method: 'POST'
+            }).then(function(response) {
+                window.location.reload();
             });
         }
     </script>

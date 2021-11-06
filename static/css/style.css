@@ -37,3 +37,7 @@ h1, h2, h3, h5, h6, p, label{
     /* grid-gap: 1px; */
     
 }
+a{
+    text-decoration: none !important;
+    color: white !important;
+}

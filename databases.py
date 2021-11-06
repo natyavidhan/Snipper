@@ -20,6 +20,7 @@ class Database:
             'email': email,
             'avatar': f'https://avatars.dicebear.com/api/bottts/{id}.svg',
             'snips': [],
+            'saves': [],
             'created': datetime.datetime.now().strftime("%d %B %Y, %I:%M:%S %p")
         })
     
@@ -64,3 +65,23 @@ class Database:
         for snip in user['snips']:
             snips.append(self.getSnip(snip))
         return snips
+    
+    def saveSnip(self, snipId, email):
+        user = self.getUser(email)
+        if snipId in user['saves']:
+            return False
+        self.users.update_one({'_id': user['_id']}, {'$push': {'saves': snipId}})
+        return True
+    
+    def removeSnip(self, snipId, email):
+        user = self.getUser(email)
+        if snipId not in user['saves']:
+            return False
+        self.users.update_one({'_id': user['_id']}, {'$pull': {'saves': snipId}})
+        return True
+    
+    def get10RandomSnips(self):
+        snips = self.snips.aggregate([
+            {'$sample': {'size': 10}}
+        ])
+        return [snip for snip in snips]
