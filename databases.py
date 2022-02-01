@@ -80,6 +80,11 @@ class Database:
         self.users.update_one({'_id': user['_id']}, {'$pull': {'saves': snipId}})
         return True
     
+    def delteSnip(self, snipId, email):
+        user = self.getUser(email)
+        self.snips.delete_one({'_id': snipId})
+        self.users.update_one({'_id': user['_id']}, {'$pull': {'snips': snipId}})
+    
     def get10RandomSnips(self):
         snips = self.snips.aggregate([
             {'$sample': {'size': 10}}

@@ -48,18 +48,20 @@
 
             </code>
         </pre>
-        {% if user is not none %}
-            {% if snip['_id'] not in user['saves'] %}
-                <button class="btn btn-info" onclick="saveSnip()">Save Snip</button>
-            {% else %}
-                <button class="btn btn-info disabled"><i>Saved</i></button>
+        <div style="display: flex;">
+            {% if user is not none %}
+                {% if snip['_id'] not in user['saves'] %}
+                    <button class="btn btn-info" onclick="saveSnip()">Save Snip</button>
+                {% else %}
+                    <button class="btn btn-info disabled"><i>Saved</i></button>
+                {% endif %}
             {% endif %}
-        {% endif %}
-        {% if user['email'] == snip['by'] %}
-        <form action="/remove?snip={{snip['_id']}}" method="post">
-            <button class="btn btn-info" type="submit">Save Snip</button>
-        </form>
-        {% endif %}
+            {% if user['_id'] == snip['by']['_id'] %}
+            <form action="/delete?snip={{snip['_id']}}" method="post" class="ms-3">
+                <button class="btn btn-danger" type="submit">Delete</button>
+            </form>
+            {% endif %}
+        </div>
     </div>
     <script>
         var snip = `{{snip['snip']}}`;

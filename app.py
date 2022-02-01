@@ -120,7 +120,7 @@ def save():
 def remove():
     if 'user' in session:
         snipID = request.args.get('snip')
-        if snipID in session['user']['snips']:
+        if snipID in session['user']['saves']:
             database.removeSnip(snipID, session['user']['email'])
             session['user'] = database.getUser(session['user']['email'])
             return "ok"
@@ -138,6 +138,17 @@ def saves():
         return render_template('saves.html', user = session['user'])
     else:
         return redirect(url_for('index'))
+    
+@app.route('/delete', methods=['POST'])
+def delete():
+    if 'user' in session:
+        snipID = request.args.get('snip')
+        if snipID in session['user']['snips']:
+            database.delteSnip(snipID, session['user']['email'])
+            session['user'] = database.getUser(session['user']['email'])
+            return redirect(url_for('home'))
+        return abort(404)
+    return abort(404)
 
 def handle_authorize(remote, token, user_info):
     if database.userExists(user_info['email']):
