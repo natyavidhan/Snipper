@@ -55,6 +55,11 @@
                 <button class="btn btn-info disabled"><i>Saved</i></button>
             {% endif %}
         {% endif %}
+        {% if user['email'] == snip['by'] %}
+        <form action="/remove?snip={{snip['_id']}}" method="post">
+            <button class="btn btn-info" type="submit">Save Snip</button>
+        </form>
+        {% endif %}
     </div>
     <script>
         var snip = `{{snip['snip']}}`;
