@@ -61,10 +61,7 @@ class Database:
     
     def getUserSnips(self, email):
         user = self.getUser(email)
-        snips = []
-        for snip in user['snips']:
-            snips.append(self.getSnip(snip))
-        return snips
+        return [self.getSnip(snip) for snip in user['snips']]
     
     def saveSnip(self, snipId, email):
         user = self.getUser(email)
@@ -89,4 +86,4 @@ class Database:
         snips = self.snips.aggregate([
             {'$sample': {'size': 10}}
         ])
-        return [snip for snip in snips]
+        return list(snips)
