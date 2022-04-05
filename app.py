@@ -96,8 +96,7 @@ def snip(id):
 def user(id):
     if id == session['user']['_id']:
         return redirect(url_for('home'))
-    user = database.getUserWithId(id)
-    if user:
+    if user := database.getUserWithId(id):
         snips = database.getUserSnips(user['email'])
         user['snips'] = snips
         return render_template('user.html', user = user)
@@ -108,8 +107,7 @@ def user(id):
 def save():
     if 'user' in session:
         snipID = request.args.get('snip')
-        snip = database.getSnip(snipID)
-        if snip:
+        if snip := database.getSnip(snipID):
             database.saveSnip(snipID, session['user']['email'])
             session['user'] = database.getUser(session['user']['email'])
             return "ok"
@@ -129,15 +127,12 @@ def remove():
 
 @app.route('/saves')
 def saves():
-    if 'user' in session:
-        # return jsonify(session['user']['saves'])
-        snips = []
-        for snip in session['user']['saves']:
-            snips.append(database.getSnip(snip))
-        session['user']['saves'] = snips
-        return render_template('saves.html', user = session['user'])
-    else:
+    if 'user' not in session:
         return redirect(url_for('index'))
+        # return jsonify(session['user']['saves'])
+    snips = [database.getSnip(snip) for snip in session['user']['saves']]
+    session['user']['saves'] = snips
+    return render_template('saves.html', user = session['user'])
     
 @app.route('/delete', methods=['POST'])
 def delete():
@@ -151,11 +146,9 @@ def delete():
     return abort(404)
 
 def handle_authorize(remote, token, user_info):
-    if database.userExists(user_info['email']):
-        session['user'] = database.getUser(user_info['email'])
-    else:
+    if not database.userExists(user_info['email']):
         database.addUser(user_info['email'])
-        session['user'] = database.getUser(user_info['email'])
+    session['user'] = database.getUser(user_info['email'])
     return redirect(url_for('home'))
 
 
