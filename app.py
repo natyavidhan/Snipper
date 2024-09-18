@@ -35,6 +35,7 @@ app = Flask(__name__)
 oauth = OAuth(app)
 
 app.config.from_mapping(dict(os.environ))
+app.secret_key = os.getenv("secret_key")
 database = databases.Database(app.config['MONGO_URI'])
 
 @app.route('/')
