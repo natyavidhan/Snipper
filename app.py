@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session, abort
 from authlib.integrations.flask_client import OAuth
 import config
-from loginpass import create_flask_blueprint, GitHub, Google, Gitlab, Discord
 import databases
+from dotenv import load_dotenv
+
 import os 
+
+load_dotenv()
 
 themes = ['3024-day', '3024-night', 'abbott', 'abcdef', 'ambiance-mobile', 'ambiance', 'ayu-dark', 
           'ayu-mirage', 'base16-dark', 'base16-light', 'bespin', 'blackboard', 'cobalt', 'colorforth', 
@@ -33,9 +36,7 @@ oauth = OAuth(app)
 
 app.secret_key = "YOUR SECRET KEY"
 app.config.from_pyfile('config.py')
-database = databases.Database(app.config['MONGO_URI'], app.config['AIR_TABLE_API_KEY'])
-
-backends = [GitHub, Google, Gitlab, Discord]
+database = databases.Database(app.config['MONGO_URI'])
 
 @app.route('/')
 def index():
@@ -43,6 +44,34 @@ def index():
         snips = database.get10RandomSnips()
         return render_template('browse.html', snips=snips)
     return render_template('index.html')
+
+@app.route('/auth/google/')
+def google():
+    GOOGLE_CLIENT_ID = config.GOOGLE_CLIENT_ID
+    GOOGLE_CLIENT_SECRET = config.GOOGLE_CLIENT_SECRET
+    
+    CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
+    oauth.register(
+        name='google',
+        client_id=GOOGLE_CLIENT_ID,
+        client_secret=GOOGLE_CLIENT_SECRET,
+        server_metadata_url=CONF_URL,
+        client_kwargs={
+            'scope': 'openid email profile'
+        }
+    )
+    redirect_uri = url_for('google_auth', _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+@app.route('/auth/google/callback')
+def google_auth():
+    token = oauth.google.authorize_access_token()
+    prof = token['userinfo']
+    user = database.getUser(prof['email'])
+    if user is None:
+        user = database.addUser(prof['email'], prof['name'])
+    session['user'] = prof['email']
+    return redirect('/')
 
 @app.route('/home')
 def home():
@@ -145,15 +174,6 @@ def delete():
         return abort(404)
     return abort(404)
 
-def handle_authorize(remote, token, user_info):
-    if not database.userExists(user_info['email']):
-        database.addUser(user_info['email'])
-    session['user'] = database.getUser(user_info['email'])
-    return redirect(url_for('home'))
-
-
-bp = create_flask_blueprint(backends, oauth, handle_authorize)
-app.register_blueprint(bp, url_prefix='/')
     
 if __name__ == '__main__':
     app.run(debug=True)

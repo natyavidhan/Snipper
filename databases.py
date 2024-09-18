@@ -5,14 +5,13 @@ import datetime
 import requests
 
 class Database:
-    def __init__(self, URL, AIRKEY):
+    def __init__(self, URL):
         self.client = MongoClient(URL)
         self.db = self.client.Snipper
         self.users = self.db.users
         self.snips = self.db.snips
         
-    def addUser(self, email):
-        name = requests.get('http://names.drycodes.com/1').json()[0]
+    def addUser(self, email, name):
         id =str(uuid4())
         self.users.insert_one({
             '_id': id,
