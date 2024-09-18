@@ -34,8 +34,7 @@ languages = ['apl', 'asciiarmor', 'asn.1', 'asterisk', 'brainfuck', 'clike', 'cl
 app = Flask(__name__)
 oauth = OAuth(app)
 
-app.secret_key = "YOUR SECRET KEY"
-app.config.from_pyfile('config.py')
+app.config.from_mapping(dict(os.environ))
 database = databases.Database(app.config['MONGO_URI'])
 
 @app.route('/')
