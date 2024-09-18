@@ -17,7 +17,7 @@ class Database:
             '_id': id,
             'username': name,
             'email': email,
-            'avatar': f'https://avatars.dicebear.com/api/bottts/{id}.svg',
+            'avatar': f'https://api.dicebear.com/9.x/lorelei/svg?seed={id}',
             'snips': [],
             'saves': [],
             'created': datetime.datetime.now().strftime("%d %B %Y, %I:%M:%S %p")

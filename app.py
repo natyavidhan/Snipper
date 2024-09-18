@@ -70,8 +70,8 @@ def google_auth():
     user = database.getUser(prof['email'])
     if user is None:
         user = database.addUser(prof['email'], prof['name'])
-    session['user'] = prof['email']
-    return redirect('/')
+    session['user'] = database.getUser(prof['email'])
+    return redirect('/home')
 
 @app.route('/home')
 def home():

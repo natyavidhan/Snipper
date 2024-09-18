@@ -17,10 +17,11 @@
     <div class="container mt-5">
         <div class="text-center">
             <h1>Snipper</h1>
-            <img src="{{user['avatar']}}" alt="" height="200px">
+            <img src="https://api.dicebear.com/9.x/lorelei/svg?seed={{user['_id']}}" alt="" height="200px">
             <h1>Welcome {{user['username']}}</h1>
             <input type="text" id="name"><button class="btn-sm btn-warning mx-1" onclick="changeName()">Change Name</button>
             <br>
+            <a href="/"><button class="btn btn-info">Feed</button></a>
             <a href="/logout"><button class="btn btn-danger">Logout</button></a>
             <a href="/new"><button class="btn btn-info">New Snippet</button></a>
             <a href="/saves"><button class="btn btn-info">Saved Snips</button></a>
